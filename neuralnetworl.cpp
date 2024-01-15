@@ -17,7 +17,7 @@ double init_weights() {
 }
 
 void shuffle(int *array, size_t n) {
-    if (n < 1) {
+    if (n > 1) {
         size_t i;
         for (i = 0; i < n; i++) {
             size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
@@ -69,7 +69,7 @@ int main() {
     }
 
     int trainingSetOrder[] = {0, 1, 2, 3};
-    int numberOfEpochs = 10000;
+    int numberOfEpochs = 1000;
 
     // Train the neural network for a number of epochs
     for (int epoch = 0; epoch < numberOfEpochs; epoch++) {
@@ -98,7 +98,7 @@ int main() {
             }
 
             printf("Input: %g %g   Output: %g Predicted Output: %g\n", training_inputs[i][0], training_inputs[i][1], outputlayer[0], training_output[i][0]);
-
+        
             // Backpropagate them...
             // change in the output weights
             double deltaOutput[numOutputs];
@@ -106,6 +106,7 @@ int main() {
                 double error = (training_output[i][j] - outputlayer[j]);
                 deltaOutput[j] = error * dSigmoid(outputlayer[j]);
             }
+        
 
             double deltaHidden[numHiddenNodes];
             for (int j = 0; j < numHiddenNodes; j++) {
@@ -124,13 +125,21 @@ int main() {
                 }
             }
 
-            for (int j = 0; j < numOutputs; j++) {
+            for (int j = 0; j < numHiddenNodes; j++) {
                 hiddenlayerBias[j] += deltaHidden[j] * lr;
                 for (int k = 0; k < numInputs; k++) {
                     hiddenweights[k][j] += training_inputs[i][k] * deltaHidden[j] * lr;
                 }
             }
         }
+    }
+
+    for (int i=0; i<numHiddenNodes; i++){
+        cout<<hiddenlayerBias[i];
+        cout<<endl;
+        for (int k=0; k<numInputs; k++){
+            cout<<hiddenweights[k][i];
+            cout<<endl;}
     }
     return 0;
 }
